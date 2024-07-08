@@ -3,11 +3,8 @@ import { useCallback, useState } from 'react';
 import { Calendar as BigCalendar, momentLocalizer } from 'react-big-calendar';
 import moment from 'moment';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
-import { Modal, Input } from 'antd';
+import { Modal, Input, DatePicker } from 'antd';
 import EventModal from './components/EventModal';
-
-import { DatePicker } from 'antd';
-const { RangePicker } = DatePicker;
 
 const localizer = momentLocalizer(moment);
 
@@ -24,6 +21,11 @@ const Calendar = () => {
   const [myEvents, setEvents] = useState(events);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState(null);
+  const [newEvent, setNewEvent] = useState({
+    start: null,
+    end: null,
+    title: '',
+  });
 
   const handleSelectSlot = useCallback(
     ({ start, end }) => {
@@ -31,24 +33,45 @@ const Calendar = () => {
         title: 'New Event',
         content: (
           <>
-            <RangePicker />
+            <DatePicker
+              placeholder='Start date'
+              onChange={(date) => {
+                setNewEvent((prev) => ({
+                  ...prev,
+                  start: date ? date.toDate() : null,
+                }));
+              }}
+            />
+            <DatePicker
+              placeholder='End date'
+              onChange={(date) => {
+                setNewEvent((prev) => ({
+                  ...prev,
+                  end: date ? date.toDate() : null,
+                }));
+              }}
+            />
             <Input
               placeholder='Event name'
-              onPressEnter={(e) => {
+              onChange={(e) => {
                 const title = e.target.value;
-                if (title) {
-                  setEvents((prev) => [...prev, { start, end, title }]);
-                  Modal.destroyAll();
-                }
+                setNewEvent((prev) => ({
+                  ...prev,
+                  title: title,
+                }));
               }}
             />
           </>
         ),
-        onOk: () => {},
+        onOk: () => {
+          if (newEvent.title && newEvent.start && newEvent.end) {
+            setEvents((prev) => [...prev, newEvent]);
+          }
+        },
         onCancel: () => {},
       });
     },
-    [setEvents]
+    [newEvent, setNewEvent, setEvents]
   );
 
   const handleSelectEvent = useCallback((event) => {
