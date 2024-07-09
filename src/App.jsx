@@ -36,14 +36,16 @@ const Calendar = () => {
     const final = newEvent.end
     const title = newEvent.title
     let difDias = final.diff(inicio, 'days');
+    let difHours = final.hour() - inicio.hour()
 
     for (let index = 0; index < difDias; index++) {
-      let fechaFin = inicio.add(index, 'days');
+      let fechaInicio = inicio.add(index, 'days');
+      let fechaFin = inicio.add(index, 'days').add(difHours, 'hours');
       setEvents((prev) => [...prev, {
         title: title,
-        start: fechaFin.toDate(),
+        start: fechaInicio.toDate(),
         end: fechaFin.toDate(),
-      }]);      
+      }]);
     }
 
     setIsModalOpen(false);
@@ -97,6 +99,7 @@ const Calendar = () => {
         }} />
         <DatePicker
           placeholder='Start date'
+          showTime
           onChange={(date) => {
             setNewEvent((prev) => ({
               ...prev,
@@ -106,6 +109,7 @@ const Calendar = () => {
         />
         <DatePicker
           placeholder='Start date'
+          showTime
           onChange={(date) => {
             setNewEvent((prev) => ({
               ...prev,
