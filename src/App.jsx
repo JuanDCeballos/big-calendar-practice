@@ -3,7 +3,7 @@ import { useCallback, useState } from 'react';
 import { Calendar as BigCalendar, momentLocalizer } from 'react-big-calendar';
 import moment from 'moment';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
-import { Modal, Input, DatePicker } from 'antd';
+import { Modal, Input, DatePicker, Button } from 'antd';
 import EventModal from './components/EventModal';
 
 const localizer = momentLocalizer(moment);
@@ -27,49 +27,35 @@ const Calendar = () => {
     title: '',
   });
 
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const showModal = () => {
+    setIsModalOpen(true);
+  };
+  const handleOk = () => {
+    const inicio = newEvent.start
+    const final = newEvent.end
+    const title = newEvent.title
+    let difDias = final.diff(inicio, 'days');
+
+    for (let index = 0; index < difDias; index++) {
+      let fechaFin = inicio.add(index, 'days');
+      setEvents((prev) => [...prev, {
+        title: title,
+        start: fechaFin.toDate(),
+        end: fechaFin.toDate(),
+      }]);      
+    }
+
+    setIsModalOpen(false);
+  };
+  const handleCancel = () => {
+    alert('cancel')
+    setIsModalOpen(false);
+  };
+
   const handleSelectSlot = useCallback(
     ({ start, end }) => {
-      Modal.confirm({
-        title: 'New Event',
-        content: (
-          <>
-            <DatePicker
-              placeholder='Start date'
-              onChange={(date) => {
-                setNewEvent((prev) => ({
-                  ...prev,
-                  start: date ? date.toDate() : null,
-                }));
-              }}
-            />
-            <DatePicker
-              placeholder='End date'
-              onChange={(date) => {
-                setNewEvent((prev) => ({
-                  ...prev,
-                  end: date ? date.toDate() : null,
-                }));
-              }}
-            />
-            <Input
-              placeholder='Event name'
-              onChange={(e) => {
-                const title = e.target.value;
-                setNewEvent((prev) => ({
-                  ...prev,
-                  title: title,
-                }));
-              }}
-            />
-          </>
-        ),
-        onOk: () => {
-          if (newEvent.title && newEvent.start && newEvent.end) {
-            setEvents((prev) => [...prev, newEvent]);
-          }
-        },
-        onCancel: () => {},
-      });
+      showModal()
     },
     [newEvent, setNewEvent, setEvents]
   );
@@ -92,15 +78,45 @@ const Calendar = () => {
         endAccessor='end'
         style={{ height: 500 }}
         onSelectEvent={handleSelectEvent}
-        onSelectSlot={handleSelectSlot}
-        selectable
       />
       <EventModal
         isVisible={isModalVisible}
         event={selectedEvent}
         onClose={handleCloseModal}
       />
+
+      <Button onClick={handleSelectSlot}>boton </Button>
+
+      <Modal title="Basic Modal" open={isModalOpen} onOk={handleOk} onCancel={handleCancel}>
+        <Input aria-label='Evento:' value={newEvent.title} onChange={(e) => {
+          const title = e.target.value;
+          setNewEvent((prev) => ({
+            ...prev,
+            title: title,
+          }));
+        }} />
+        <DatePicker
+          placeholder='Start date'
+          onChange={(date) => {
+            setNewEvent((prev) => ({
+              ...prev,
+              start: date ? date : null,
+            }));
+          }}
+        />
+        <DatePicker
+          placeholder='Start date'
+          onChange={(date) => {
+            setNewEvent((prev) => ({
+              ...prev,
+              end: date ? date.add(1, 'days') : null,
+            }));
+          }}
+        />
+
+      </Modal>
     </>
+
   );
 };
 
