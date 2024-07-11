@@ -1,21 +1,27 @@
-import { Modal as AntdModal, DatePicker, Input } from 'antd';
+import { Modal as AntdModal, DatePicker, Input, Typography } from 'antd';
 import moment from 'moment';
 
 const Modal = ({
-  isModalOpen,
-  handleOk,
+  isModalOpen,  
   handleCancel,
   setNewEvent,
   selectedEvent,
   isEditing,
 }) => {
+
+  const handleOks = () => {
+    console.log('Agregar logica para crear evento');
+    console.log(setNewEvent());
+  }
+
   return (
     <>
-      <AntdModal open={isModalOpen} onOk={handleOk} onCancel={handleCancel}>
+      <AntdModal open={isModalOpen} onOk={handleOks} onCancel={handleCancel}>
+        <Typography level={2}>RESERVA</Typography>
         <Input
           required
           disabled={isEditing}
-          aria-label='Evento:'
+          placeholder='Nombre del Evento'
           value={selectedEvent?.title}
           onChange={(e) => {
             const title = e.target.value;
@@ -25,12 +31,11 @@ const Modal = ({
             }));
           }}
         />
-        <DatePicker
+        <DatePicker          
           required
           disabled={isEditing}
-          placeholder='Start date'
-          //   value={isEditing ? moment(selectedEvent?.start) : null}
-          value={moment(selectedEvent?.start)}
+          placeholder='Fecha Inicio'
+          value={selectedEvent !== null && selectedEvent !== undefined ? moment(selectedEvent.start) : null}
           showTime
           onChange={(date) => {
             setNewEvent((prev) => ({
@@ -42,8 +47,8 @@ const Modal = ({
         <DatePicker
           required
           disabled={isEditing}
-          placeholder='End date'
-          value={moment(selectedEvent?.end)}
+          placeholder='Fecha Fin'
+          value={selectedEvent !== null && selectedEvent !== undefined ? moment(selectedEvent.end) : null}
           showTime
           onChange={(date) => {
             setNewEvent((prev) => ({

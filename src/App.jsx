@@ -1,6 +1,6 @@
 // Calendar.js
 import { useCallback, useState } from 'react';
-import { Calendar as BigCalendar, momentLocalizer } from 'react-big-calendar';
+import { Calendar as BigCalendar, momentLocalizer, Views } from 'react-big-calendar';
 import moment from 'moment';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import { Button } from 'antd';
@@ -11,10 +11,16 @@ const localizer = momentLocalizer(moment);
 const events = [
   {
     title: 'Meeting',
-    start: new Date(),
-    end: new Date(),
+    start: moment("07-10-2024 09:15", "MM-DD-YYYY HH:mm:ss").toDate(),
+    end: moment("07-10-2024 17:15", "MM-DD-YYYY HH:mm:ss").toDate(),
     allDay: false,
   },
+  {
+    title: 'Meeting TODAY',
+    start: new Date(),
+    end: moment(new Date()).add(2, "hours"),
+    allDay: false,
+  }
 ];
 
 const Calendar = () => {
@@ -27,10 +33,12 @@ const Calendar = () => {
   });
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
+  const [fechaHoy, setFechaHoy] = useState(new Date());  
 
   const showModal = () => {
     setIsEditing(false);
     setIsModalOpen(true);
+    setSelectedEvent(null);
   };
 
   const handleOk = () => {
@@ -62,7 +70,7 @@ const Calendar = () => {
   };
 
   const handleSelectEvent = useCallback((event) => {
-    console.log(event);
+    console.log(`Evento seleccionado: ${event.title}`);
     setIsEditing(true);
     setSelectedEvent(event);
     setIsModalOpen(true);
@@ -77,17 +85,18 @@ const Calendar = () => {
         endAccessor='end'
         style={{ height: 500 }}
         onSelectEvent={handleSelectEvent}
+        // defaultView={Views.DAY}
       />
 
-      <Button onClick={showModal}>boton </Button>
+      <Button onClick={showModal}>Crear Reserva</Button>
 
       <Modal
-        isModalOpen={isModalOpen}
-        handleOk={handleOk}
+        isModalOpen={isModalOpen}        
         handleCancel={handleCancel}
         setNewEvent={setNewEvent}
         selectedEvent={selectedEvent}
         isEditing={isEditing}
+        // fechaActual={fechaHoy}
       />
     </>
   );
