@@ -7,20 +7,7 @@ import { Button } from 'antd';
 import Modal from './components/Modal';
 
 const localizer = momentLocalizer(moment);
-
 const events = [
-  {
-    title: 'Meeting',
-    start: moment("07-10-2024 09:15", "MM-DD-YYYY HH:mm:ss").toDate(),
-    end: moment("07-10-2024 17:15", "MM-DD-YYYY HH:mm:ss").toDate(),
-    allDay: false,
-  },
-  {
-    title: 'Meeting TODAY',
-    start: new Date(),
-    end: moment(new Date()).add(2, "hours"),
-    allDay: false,
-  }
 ];
 
 const Calendar = () => {
@@ -33,7 +20,7 @@ const Calendar = () => {
   });
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
-  const [fechaHoy, setFechaHoy] = useState(new Date());  
+  const [fechaHoy, setFechaHoy] = useState(new Date());
 
   const showModal = () => {
     setIsEditing(false);
@@ -41,7 +28,7 @@ const Calendar = () => {
     setSelectedEvent(null);
   };
 
-  const handleOk = () => {
+  const addNewEvent = (newEvent) => {
     const inicio = newEvent.start;
     const final = newEvent.end;
     const title = newEvent.title;
@@ -85,18 +72,17 @@ const Calendar = () => {
         endAccessor='end'
         style={{ height: 500 }}
         onSelectEvent={handleSelectEvent}
-        // defaultView={Views.DAY}
+      // defaultView={Views.DAY} PARA PONER LA VISTA POR DEFECTO EN DIAS, APLICAR RECURSOS
       />
 
       <Button onClick={showModal}>Crear Reserva</Button>
 
       <Modal
-        isModalOpen={isModalOpen}        
+        isModalOpen={isModalOpen}
         handleCancel={handleCancel}
-        setNewEvent={setNewEvent}
+        setNewEvent={addNewEvent}
         selectedEvent={selectedEvent}
         isEditing={isEditing}
-        // fechaActual={fechaHoy}
       />
     </>
   );

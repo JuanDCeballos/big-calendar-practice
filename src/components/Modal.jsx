@@ -1,17 +1,28 @@
 import { Modal as AntdModal, DatePicker, Input, Typography } from 'antd';
 import moment from 'moment';
+import { useState } from 'react';
 
 const Modal = ({
-  isModalOpen,  
+  isModalOpen,
   handleCancel,
   setNewEvent,
   selectedEvent,
   isEditing,
 }) => {
 
+  const [startDate, setStartDate] = useState(null)
+  const [endDate, setEndDate] = useState(null)
+  const [nameEvent, setNameEvent] = useState('')
+
   const handleOks = () => {
-    console.log('Agregar logica para crear evento');
-    console.log(setNewEvent());
+    if (selectedEvent == null && startDate !== null && endDate !== null && nameEvent !== '') {
+      setNewEvent({ start: startDate, end: endDate.add(1, 'days'), title: nameEvent });
+      setStartDate(null);
+      setEndDate(null);
+      setNameEvent('');
+    } else {
+      console.log('campos vacíos o evento ya creado');
+    }
   }
 
   return (
@@ -22,41 +33,35 @@ const Modal = ({
           required
           disabled={isEditing}
           placeholder='Nombre del Evento'
-          value={selectedEvent?.title}
+          value={selectedEvent !== null && selectedEvent !== undefined ? moment(selectedEvent.start) : nameEvent}
           onChange={(e) => {
-            const title = e.target.value;
-            setNewEvent((prev) => ({
-              ...prev,
-              title: title,
-            }));
+            setNameEvent(e.target.value);
           }}
         />
-        <DatePicker          
+        <Typography level={2}>Seleccione fecha y hora de inicio</Typography>
+        <DatePicker
           required
           disabled={isEditing}
           placeholder='Fecha Inicio'
-          value={selectedEvent !== null && selectedEvent !== undefined ? moment(selectedEvent.start) : null}
+          value={selectedEvent !== null && selectedEvent !== undefined ? moment(selectedEvent.start) : startDate}
           showTime
           onChange={(date) => {
-            setNewEvent((prev) => ({
-              ...prev,
-              start: date ? date : null,
-            }));
+            setStartDate(date ? date : null);
           }}
         />
+        <Typography level={2}>Seleccione fecha y hora de finalización</Typography>
         <DatePicker
           required
           disabled={isEditing}
           placeholder='Fecha Fin'
-          value={selectedEvent !== null && selectedEvent !== undefined ? moment(selectedEvent.end) : null}
+          value={selectedEvent !== null && selectedEvent !== undefined ? moment(selectedEvent.end) : endDate}
           showTime
           onChange={(date) => {
-            setNewEvent((prev) => ({
-              ...prev,
-              end: date ? date.add(1, 'days') : null,
-            }));
+            setEndDate(date ? date : null);
           }}
         />
+        <Typography level={2}>¿Existe el cliente?</Typography>
+        <Typography level={2}>Documento del Cliente existente:</Typography>
       </AntdModal>
     </>
   );
