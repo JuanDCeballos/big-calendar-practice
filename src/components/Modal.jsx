@@ -1,4 +1,4 @@
-import { Modal as AntdModal, DatePicker, Input, Typography } from 'antd';
+import { Modal as AntdModal, DatePicker, Input, Typography, Radio } from 'antd';
 import moment from 'moment';
 import { useState } from 'react';
 
@@ -13,6 +13,9 @@ const Modal = ({
   const [startDate, setStartDate] = useState(null)
   const [endDate, setEndDate] = useState(null)
   const [nameEvent, setNameEvent] = useState('')
+  // const [docClient, setDocClient] = useState('')
+  // const [tipoCliente, setTipoCliente] = useState(0)
+  
 
   const handleOks = () => {
     if (selectedEvent == null && startDate !== null && endDate !== null && nameEvent !== '') {
@@ -33,7 +36,7 @@ const Modal = ({
           required
           disabled={isEditing}
           placeholder='Nombre del Evento'
-          value={selectedEvent !== null && selectedEvent !== undefined ? moment(selectedEvent.start) : nameEvent}
+          value={selectedEvent !== null && selectedEvent !== undefined ? selectedEvent.title : nameEvent}
           onChange={(e) => {
             setNameEvent(e.target.value);
           }}
@@ -60,8 +63,22 @@ const Modal = ({
             setEndDate(date ? date : null);
           }}
         />
-        <Typography level={2}>¿Existe el cliente?</Typography>
+        {/* <Typography level={2}>¿Existe el cliente? // Aplicar funcionalidad</Typography>
+        <Radio.Group value={tipoCliente}>
+          <Radio value={1}>Si</Radio>
+          <Radio value={2}>No</Radio>
+        </Radio.Group>
         <Typography level={2}>Documento del Cliente existente:</Typography>
+        <Input
+          required
+          type='number'
+          disabled={isEditing}
+          placeholder='Documento'
+          value={selectedEvent !== null && selectedEvent !== undefined ? '0000' : docClient}
+          onChange={(e) => {
+            setDocClient(e.target.value);
+          }}
+        /> */}
       </AntdModal>
     </>
   );
